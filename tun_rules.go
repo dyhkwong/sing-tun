@@ -147,7 +147,7 @@ func (o *Options) BuildAutoRouteRanges(underNetworkExtension bool) ([]netip.Pref
 			routeRanges = append(routeRanges, resultSet.Prefixes()...)
 		}
 	}
-	if len(o.Inet6Address) > 0 {
+	if o.AutoRoute && len(o.Inet6Address) > 0 {
 		var inet6Ranges []netip.Prefix
 		if len(o.Inet6RouteAddress) > 0 {
 			inet6Ranges = o.Inet6RouteAddress

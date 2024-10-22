@@ -19,7 +19,6 @@ import (
 	"github.com/sagernet/sing/common/atomic"
 	"github.com/sagernet/sing/common/buf"
 	E "github.com/sagernet/sing/common/exceptions"
-	"github.com/sagernet/sing/common/windnsapi"
 
 	"golang.org/x/sys/windows"
 )
@@ -119,10 +118,6 @@ func (t *NativeTun) configure() error {
 				err = luid.AddRoute(routeRange, gateway6, 0)
 			}
 		}
-		if err != nil {
-			return err
-		}
-		err = windnsapi.FlushResolverCache()
 		if err != nil {
 			return err
 		}
@@ -486,9 +481,6 @@ func (t *NativeTun) Close() error {
 		t.adapter.Close()
 		if t.fwpmSession != 0 {
 			winsys.FwpmEngineClose0(t.fwpmSession)
-		}
-		if t.options.AutoRoute {
-			windnsapi.FlushResolverCache()
 		}
 	})
 	return err

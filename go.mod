@@ -3,7 +3,6 @@ module github.com/sagernet/sing-tun
 go 1.20
 
 require (
-	github.com/go-ole/go-ole v1.3.0
 	github.com/sagernet/fswatch v0.1.1
 	github.com/sagernet/gvisor v0.0.0-20241019061641-46bad1ee6ecc
 	github.com/sagernet/netlink v0.0.0-20240612041022-b9a21c07ac6a

@@ -261,6 +261,34 @@ func (t *NativeTun) Name() (string, error) {
 	return unix.ByteSliceToString(ifr[:]), nil
 }
 
+func (t *NativeTun) MTU() (int32, error) {
+	name, err := t.Name()
+	if err != nil {
+		return 0, err
+	}
+	fd, err := unix.Socket(
+		unix.AF_INET,
+		unix.SOCK_DGRAM|unix.SOCK_CLOEXEC,
+		0,
+	)
+	if err != nil {
+		return 0, err
+	}
+	defer unix.Close(fd)
+	var ifr [unix.IFNAMSIZ + 64]byte
+	copy(ifr[:], name)
+	_, _, errno := unix.Syscall(
+		unix.SYS_IOCTL,
+		uintptr(fd),
+		uintptr(unix.SIOCGIFMTU),
+		uintptr(unsafe.Pointer(&ifr[0])),
+	)
+	if errno != 0 {
+		return 0, os.NewSyscallError("ioctl SIOCGIFMTU", errno)
+	}
+	return *(*int32)(unsafe.Pointer(&ifr[unix.IFNAMSIZ])), nil
+}
+
 func (t *NativeTun) Start() error {
 	if t.options.FileDescriptor != 0 {
 		return nil

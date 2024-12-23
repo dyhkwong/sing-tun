@@ -13,7 +13,7 @@ func (t *NativeTun) NewEndpoint() (stack.LinkEndpoint, error) {
 	if t.vnetHdr {
 		return fdbased.New(&fdbased.Options{
 			FDs:               []int{t.tunFd},
-			MTU:               t.options.MTU,
+			MTU:               uint32(t.options.MTU),
 			GSOMaxSize:        gsoMaxSize,
 			GRO:               true,
 			RXChecksumOffload: true,
@@ -22,7 +22,7 @@ func (t *NativeTun) NewEndpoint() (stack.LinkEndpoint, error) {
 	}
 	return fdbased.New(&fdbased.Options{
 		FDs:               []int{t.tunFd},
-		MTU:               t.options.MTU,
+		MTU:               uint32(t.options.MTU),
 		RXChecksumOffload: true,
 		TXChecksumOffload: t.txChecksumOffload,
 	})

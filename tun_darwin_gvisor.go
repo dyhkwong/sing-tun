@@ -24,7 +24,7 @@ type DarwinEndpoint struct {
 }
 
 func (e *DarwinEndpoint) MTU() uint32 {
-	return e.tun.options.MTU
+	return uint32(e.tun.options.MTU)
 }
 
 func (e *DarwinEndpoint) SetMTU(mtu uint32) {

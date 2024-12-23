@@ -40,6 +40,27 @@ func (t *NativeTun) Name() (string, error) {
 	)
 }
 
+func (t *NativeTun) MTU() (int32, error) {
+	name, err := t.Name()
+	if err != nil {
+		return 0, err
+	}
+	fd, err := unix.Socket(
+		unix.AF_INET,
+		unix.SOCK_DGRAM,
+		0,
+	)
+	if err != nil {
+		return 0, err
+	}
+	defer unix.Close(fd)
+	ifr, err := unix.IoctlGetIfreqMTU(fd, name)
+	if err != nil {
+		return 0, os.NewSyscallError("IoctlGetIfreqMTU", err)
+	}
+	return ifr.MTU, nil
+}
+
 func New(options Options) (Tun, error) {
 	var tunFd int
 	if options.FileDescriptor == 0 {
@@ -170,7 +191,7 @@ func configure(tunFd int, ifIndex int, name string, options Options) error {
 	err = useSocket(unix.AF_INET, unix.SOCK_DGRAM, 0, func(socketFd int) error {
 		var ifr unix.IfreqMTU
 		copy(ifr.Name[:], name)
-		ifr.MTU = int32(options.MTU)
+		ifr.MTU = options.MTU
 		return unix.IoctlSetIfreqMTU(socketFd, &ifr)
 	})
 	if err != nil {

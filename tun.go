@@ -26,6 +26,7 @@ type Tun interface {
 	io.ReadWriter
 	N.VectorisedWriter
 	Name() (string, error)
+	MTU() (int32, error)
 	Start() error
 	Close() error
 	UpdateRouteOptions(tunOptions Options) error
@@ -54,7 +55,7 @@ type Options struct {
 	Name                     string
 	Inet4Address             []netip.Prefix
 	Inet6Address             []netip.Prefix
-	MTU                      uint32
+	MTU                      int32
 	GSO                      bool
 	AutoRoute                bool
 	InterfaceScope           bool
